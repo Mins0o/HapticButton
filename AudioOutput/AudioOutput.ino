@@ -75,34 +75,8 @@ ISR(TIMER2_OVF_vect){
 
 
 void loop(){
-  int pres = analogRead(A5)*0.6+prev*0.4;
-  if(!play_ && (
-    (prev < 100 && pres >= 100) || 
-    (prev < 200 && pres >= 200) || 
-    (prev < 300 && pres >= 300) || 
-    (prev < 400 && pres >= 400) ||
-    (prev < 500 && pres >= 500) || 
-    (prev < 600 && pres >= 600) //||
-    //(prev < 50 && pres >= 50) ||  
-    //(prev < 150 && pres >= 150) || 
-    //(prev < 250 && pres >= 250) || 
-    //(prev < 350 && pres >= 350) || 
-    //(prev < 450 && pres >= 450) || 
-    //(prev < 650 && pres >= 650)
-    ||    
-    (prev >= 100 && pres < 100) || 
-    //(prev >= 200 && pres < 200) ||
-    (prev >= 300 && pres < 300) || 
-    //(prev >= 400 && pres < 400) || 
-    //(prev >= 500 && pres < 500) || 
-    (prev >= 600 && pres < 600) //||  
-    //(prev >= 50 && pres < 50) || 
-    //(prev >= 150 && pres < 150) || 
-    //(prev >= 250 && pres < 250) ||
-    //(prev >= 350 && pres < 350) || 
-    //(prev >= 450 && pres < 450) ||
-    //(prev >= 650 && pres < 650)
-    )){
+  int pres = analogRead(A5)*0.5+prev*0.5;
+  if(!play_ && (prev/150 < pres/150 || (prev+50)/200 > (pres+50)/200)){
     play_=true;
     TCNT1=0;
     TCNT2=0;
