@@ -154,7 +154,6 @@ def DecreaseFrequency(data, originalF, targetF, avgOption = True):
 	index = 0
 	endOfList = False
 	randAdd = list([1 for i in range(randomAddPossibility)] + [0 for i in range(targetF-randomAddPossibility)])
-	print(data[:10])
 	if avgOption:
 		prev = 0
 		while not endOfList:
@@ -179,7 +178,6 @@ def DecreaseFrequency(data, originalF, targetF, avgOption = True):
 					endOfList = True
 					break
 				index += baseStep + randAdd[randomArrayIndex]
-	print(len(returnData))
 	return returnData
 	
 if (__name__ == "__main__"):

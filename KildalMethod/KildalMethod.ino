@@ -1,4 +1,5 @@
 bool play_ = true;
+int played_at = 0;
 uint8_t i = 0;
 int prev = analogRead(A5);
 int8_t sin256_zn[] = {
@@ -46,7 +47,7 @@ void setup(){
   TCCR2B |= 0b00000001; // Prescaler 1
   // Frequency = 31250 Hz, 0.032 ms
   // Audio 122 Hz
-  OCR2A = 255;
+  OCR2A = 128;
 
   TCCR1A &= 0b00001100; //Reset
   TCCR1B &= 0b00100000; //Reset
@@ -63,14 +64,27 @@ void setup(){
 
 ISR(TIMER2_OVF_vect){
   if(play_){
-    uint8_t  intensity = (sin256_zn[i]+128);//*(65536-TCNT1)/65536+128;
+    float saw = sin256_zn[i]*(long)(65536-TCNT1)/65536+128;
+    uint8_t  intensity = saw;
     OCR2A = intensity;
     i = i+1;
+    if(TCNT1 < 52 || TCNT1 > 65482){
+      play_ = false;
+    }
   }
 }
 
 
 void loop(){
-  PORTB ^= 0b00100000;
-  delay(500);
+  int pres = analogRead(A5);//*0.7+prev*0.3;
+  if(abs(pres-played_at)>50){
+    play_=true;
+    played_at = pres;
+    TCNT1=0;
+    TCNT2=0;
+    i=0;
+    PORTB ^= 0b00100000;
+  }
+  prev = pres;
+  //delay(500);
 }
