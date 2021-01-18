@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def generate_sine(frequency):
-	intervals = int(31250/frequency)
+	intervals = int(5000/frequency)
 	sinetable = np.sin(np.arange(intervals)/intervals*2*np.pi)*128+128
 	sinetable_zn = sinetable-128
 	clipping = sinetable>255
