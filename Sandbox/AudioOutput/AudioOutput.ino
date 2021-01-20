@@ -45,10 +45,10 @@ void setup(){
 
 ISR(TIMER2_OVF_vect){
   if(play_){
-    uint8_t  intensity = (sin400_zn[i]+128);
+    uint8_t  intensity = (sin200_zn[i]+128);
     OCR2A = intensity;
     i = i+1;
-    if (i>77){
+    if (i>155){
       i=0;
     }
   }
