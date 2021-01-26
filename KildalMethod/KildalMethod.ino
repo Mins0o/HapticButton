@@ -77,11 +77,11 @@ ISR(TIMER2_OVF_vect){
 void loop(){
   int pres = analogRead(A5);//*0.7+prev*0.3;
   if(abs(pres-played_at)>50){
-    play_=true;
     played_at = pres;
+    i=0;
     TCNT1=0;
     TCNT2=0;
-    i=0;
+    play_=true;
     PORTB ^= 0b00100000;
   }
   prev = pres;

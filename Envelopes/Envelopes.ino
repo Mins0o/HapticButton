@@ -1,7 +1,8 @@
-# define DURATION 10000 // max 65535
+# define DURATION 16000 // max 65535
 # define WAVE_ sin350_zn
 // 122-255 | 156-199 | 200-155 | 250-124 | 270-114 | 350-88 | 400-77 | 500-61
 # define LOOP_ 88
+float dur = DURATION/255;
 
 bool play_ = true;
 int played_at = 0;
@@ -80,21 +81,21 @@ ISR(TIMER2_OVF_vect){
       i=0;
     }
     if(~PIND & 0b10000000){
-      // Saw
-      cutoff = 53;
-      enveloped = WAVE_[i]*(long)(TCNT1)/DURATION + 128;
-    }else if(~PIND & 0b01000000){
       // Sine
-      cutoff = 80;
-      enveloped = WAVE_[i]*sin_half[uint8_t(TCNT1/float(DURATION)*255)] + 128;
-    }else if(~PIND & 0b00100000){
+      cutoff = 65;
+      enveloped = WAVE_[i]*sin_half[uint8_t(TCNT1/dur)] + 128;
+    }else if(~PIND & 0b01000000){
       // Triangle
       cutoff = 80;
-      enveloped = WAVE_[i]*(half_dur-abs(half_dur-TCNT1))/half_dur + 128;
-    }else{
+      enveloped = float(WAVE_[i]*(half_dur-abs(half_dur-TCNT1)))/half_dur + 128;
+    }else if(~PIND & 0b00100000){
       // Inverse Saw
-      cutoff = 35;
+      cutoff = 80;
       enveloped = WAVE_[i]*(long)(DURATION-TCNT1)/DURATION + 128;
+    }else{
+      // Saw
+      cutoff = 65;
+      enveloped = WAVE_[i]*(long)(TCNT1)/DURATION + 128;
     }
       
     OCR2A = (uint8_t)enveloped;
