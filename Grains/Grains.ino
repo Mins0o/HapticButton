@@ -1,16 +1,20 @@
 # define DURATION 16000 // max 65535
-# define WAVE_ sin350_zn
+# define WAVE_ sin500_zn
+# define LOOP_ 61
 // 122-255 | 156-199 | 200-155 | 250-124 | 270-114 | 350-88 | 400-77 | 500-61
-# define LOOP_ 88
+// actual frequancy
+//    79   |   101   |   129   |   161   |   176   |   227  |   258  |   326
 
 bool play_ = true;
 int played_at = 0;
 uint8_t i = 0;
 int pres;
-uint8_t grain_interval;
 
-long random_=0;
-bool pull_next=true;
+uint8_t grain_interval;
+long random_ = 0;
+// Random by default !! 
+//pin 5 = Low is random
+bool pull_next = true;
 
 
 int8_t sin122_zn[] = { // 255
@@ -31,7 +35,7 @@ int8_t sin500_zn[]={ //61
   0, 12, 25, 38, 50, 62, 73, 83, 92, 101, 108, 114, 120, 123, 126, 127, 127, 126, 123, 120, 114, 108, 101, 92, 83, 73, 62, 50, 38, 25, 12, 0, -12, -25, -38, -50, -62, -73, -83, -92, -101, -108, -114, -120, -123, -126, -127, -127, -126, -123, -120, -114, -108, -101, -92, -83, -73, -62, -50, -38, -25, -12};
 
 void setup(){
-  Serial.begin(115200);
+  //Serial.begin(115200); // For monitoring grain gap
   pinMode(11,OUTPUT);
   PORTD |= 0b11111100;  // D pins enabled for
   DDRD &= 0b00000011;   // Pull up inputs (2~7)
@@ -60,16 +64,15 @@ void setup(){
 
 ISR(TIMER2_OVF_vect){
   if(play_){
-    // 122-255 | 156-199 | 200-155 | 250-124 | 270-114 | 350-88 | 400-77 | 500-61
-    float saw_enveloped = WAVE_[i++]*(long)(DURATION-TCNT1)/DURATION+128;
-    OCR2A = (uint8_t)saw_enveloped;
+    uint8_t enveloped = WAVE_[i++]*(long)(DURATION-TCNT1)/DURATION+128;
+    OCR2A = enveloped;
+    //OCR2A = WAVE_[i]+128; // Useful for checking actual frequency
     if (i>LOOP_){
       i=0;
     }
     if(TCNT1 < 65 || TCNT1 > DURATION-65){ // Racing resolving threshold_Found by trial and error
       play_ = false;
       pull_next = true;
-      OCR2A=128;
     }
   }
 }
@@ -94,7 +97,7 @@ void loop(){
   
   //Serial.println(grain_interval);
   if(abs(pres-played_at)>grain_interval+random_){
-    Serial.println(grain_interval+random_);
+    //Serial.println(grain_interval+random_);
     played_at = pres;
     i=0;
     TCNT1=0;

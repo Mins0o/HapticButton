@@ -62,8 +62,8 @@ ISR(TIMER2_OVF_vect){
     // 122-255 | 156-199 | 200-155 | 250-124 | 270-114 | 350-88 | 400-77 | 500-61
     // Actual played frequency is 60% of the calculation
     //    75   |   _96   |   123   |   154   |   167   |   217  |   246  |   310
-    uint8_t saw_enveloped = WAVE_[i++]*(duration-TCNT1)/duration+128;
-    OCR2A = saw_enveloped;
+    uint8_t enveloped = WAVE_[i++]*(duration-TCNT1)/duration+128;
+    OCR2A = enveloped;
     //OCR2A = WAVE_[i]+128; // Useful for checking actual frequency
     if (i>LOOP_){
       i=0;
@@ -83,8 +83,8 @@ void loop(){
   sei();
   if(abs(pres-played_at)>50){
     played_at = pres;
-    TCNT2=0;
     i=0;
+    TCNT2=0;
     TCNT1=0;
     play_=true;
     PORTB ^= 0b00100000;

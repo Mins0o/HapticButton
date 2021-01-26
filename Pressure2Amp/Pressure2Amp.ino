@@ -1,14 +1,17 @@
-# define DURATION 16000 // max 65535
-# define WAVE_ sin350_zn
+# define DURATION long(11500) // max 65535
+# define WAVE_ sin500_zn
 // 122-255 | 156-199 | 200-155 | 250-124 | 270-114 | 350-88 | 400-77 | 500-61
-# define LOOP_ 88
+// Actual played frequency is about 60% of the calculation
+//   78Hz  |   99Hz  |  126Hz  |  157Hz  |  171Hz  |  221Hz |  253Hz |  320Hz
+# define LOOP_ 61
 
 bool play_ = true;
 int played_at = 0;
 uint8_t i = 0;
-int pres = analogRead(A5);
-double pressure_scaler = 1.;
-long scaled=0;
+int pres=0;
+
+float pressure_scaler = 1.;
+long scaled=65535;
 
 int8_t sin122_zn[] = { // 255  
   0, 3, 6, 9, 12, 15, 18, 21, 24, 28, 31, 34, 37, 40, 43, 46, 48, 51, 54, 57, 60, 63, 65, 68, 71, 73, 76, 78, 81, 83, 85, 88, 90, 92, 94, 96, 98, 100, 102, 104, 106, 108, 109, 111, 112, 114, 115, 117, 118, 119, 120, 121, 122, 123, 124, 124, 125, 126, 126, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 126, 126, 125, 124, 124, 123, 122, 121, 120, 119, 118, 117, 115, 114, 112, 111, 109, 108, 106, 104, 102, 100, 98, 96, 94, 92, 90, 88, 85, 83, 81, 78, 76, 73, 71, 68, 65, 63, 60, 57, 54, 51, 48, 46, 43, 40, 37, 34, 31, 28, 24, 21, 18, 15, 12, 9, 6, 3, 0, -4, -7, -10, -13, -16, -19, -22, -25, -29, -32, -35, -38, -41, -44, -47, -49, -52, -55, -58, -61, -64, -66, -69, -72, -74, -77, -79, -82, -84, -86, -89, -91, -93, -95, -97, -99, -101, -103, -105, -107, -109, -110, -112, -113, -115, -116, -118, -119, -120, -121, -122, -123, -124, -125, -125, -126, -127, -127, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, -127, -127, -126, -125, -125, -124, -123, -122, -121, -120, -119, -118, -116, -115, -113, -112, -110, -109, -107, -105, -103, -101, -99, -97, -95, -93, -91, -89, -86, -84, -82, -79, -77, -74, -72, -69, -66, -64, -61, -58, -55, -52, -49, -47, -44, -41, -38, -35, -32, -29, -25, -22, -19, -16, -13, -10, -7, -4};
@@ -56,14 +59,14 @@ void setup(){
 
 ISR(TIMER2_OVF_vect){
   if(play_){
-    float saw_enveloped = WAVE_[i++]*(long)(DURATION-TCNT1)/scaled+128;
-    OCR2A = (uint8_t)saw_enveloped;
+    uint8_t enveloped = WAVE_[i++]*(DURATION-TCNT1)/scaled+128;
+    OCR2A = enveloped;
+    //OCR2A = WAVE_[i]+128; // Useful for checking actual frequency
     if (i>LOOP_){
       i=0;
     }
     if(TCNT1 < 65 || TCNT1 > DURATION-65){ // Racing resolving threshold_Found by trial and error
       play_ = false;
-      OCR2A=128;
     }
   }
 }
@@ -83,7 +86,7 @@ void loop(){
       // No change
       pressure_scaler = 1;
     }
-    scaled = float(DURATION/pressure_scaler);
+    scaled = float(DURATION)/pressure_scaler;
     i=0;
     TCNT1=0;
     TCNT2=0;
