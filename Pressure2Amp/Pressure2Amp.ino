@@ -84,7 +84,7 @@ void loop(){
       pressure_scaler = min(1,0.2+played_at/1000.);
     }else{
       // No change
-      pressure_scaler = 1;
+      pressure_scaler = 0.6;
     }
     scaled = float(DURATION)/pressure_scaler;
     i=0;
