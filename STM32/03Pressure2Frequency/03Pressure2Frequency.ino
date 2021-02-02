@@ -22,9 +22,9 @@
 //  which is determined in the loop() according to pressure level.
 
 #define TIM2CNT (TIMER2->regs).bas->CNT // Making it shorter
-#define A_IN_LOW ((GPIOA->regs->IDR) & 0x000003fc) >> 2
+#define A_IN_LOW ((GPIOA->regs->IDR) & 0x000001fc) >> 2
 
-#define INACCURACY 0.57     // Inaccuracy of frequency cuased by heavy function call in interrupt
+#define INACCURACY 0.57//25k // Inaccuracy of frequency cuased by heavy function call in interrupt
 
 //#define INCREMENT (2 * PI)/(PWM_FREQ_K * 1000 / BASE_FREQ) / INACCURACY // Pulled out of interrupt for better performance
 //#define ENV_OVF uint(PULSE_COUNT * (PWM_FREQ_K * 1000 / BASE_FREQ))     // Determines length of  single envelope
@@ -59,9 +59,8 @@ void Timer4_ISR(){ // This function is called after every overflow. Update PWM t
   if(i>2*PI){
     i=0;
   }
-  if(TIM2CNT ==0  || env_ovf-TIM2CNT < 5){
+  if(TIM2CNT <2  || env_ovf-TIM2CNT < 5){
     play = false;
-    draw_random_var = true;
     TIM2CNT=0;
     i=0;
     pwmWrite(PB7, 36000/PWM_FREQ_K);
@@ -72,10 +71,12 @@ void setup() {
   GPIOB->regs->CRH &= 0x44404444; // Reseting pin PB12, Grain-passed indicator
   GPIOB->regs->CRH |= 0x00020000; // Setting PB12 to push-pull output
 
+  GPIOA->regs->CRH &= 0xfffffff8;
+  GPIOA->regs->CRH |= 0x00000008;
   GPIOA->regs->CRL &= 0x88888888;
   GPIOA->regs->CRL |= 0x88888888;
   GPIOA->regs->ODR &= 0x00000000;
-  GPIOA->regs->ODR |= 0x000003fc; // Pull up input
+  GPIOA->regs->ODR |= 0x000001fc; // Pull up input
   // Preset fuction from library
   pinMode(PB1, INPUT_ANALOG);
   pinMode(PB7, PWM);
@@ -120,40 +121,46 @@ void loop() {
   if(draw_random_var){
     random_var1 = random(1000);
     random_var2 = random(1000);
+    draw_random_var = false;
   }
   
   int read_val = analogRead(PB1);
   if (abs(played_at - read_val)>GRAIN_INTV){ // If increased or decreased far enough from last played
     played_at = read_val;           // 1. Keep record
     
-    if(A_IN_LOW & 0b00000001){      // 2. Pressure-Amplitude scaler
+    if(A_IN_LOW & 0b1){      // 2. base-frequency modification
       base_freq = 200 * max(1., 1+(4096-played_at)/4096.);
-    }else if(A_IN_LOW & 0b00000010){
+    }else if(A_IN_LOW & 0b10){
       base_freq = 400 * min(1., 0.5+played_at/8000.);
     }else{
-      base_freq = 350;
+      base_freq = 300;
     }
     
-    increment = 11.023132/(25000 / base_freq);
-    env_ovf = PULSE_COUNT * 25000 / base_freq;
 
-    Timer2.pause();
-    Timer2.setOverflow(env_ovf);
-    Timer2.resume();
-    if (A_IN_LOW & 0b00000100){     // 3. Randomizer
+    if (A_IN_LOW & 0b100){     // 3. Randomizer
       // Selected-Fixed scaling
       if(random_var1 < RAND_INTENSITY_1){
         base_freq *= 1.5;
       }
       if(random_var1 > 1000 - RAND_INTENSITY_1){
-        base_freq *= 0.2;
+        base_freq *= 0.5;
       }
     }else if(A_IN_LOW & 0b00001000){
       // Universal-Random scaling
       float temp = 1000000/RAND_INTENSITY_2;
-      base_freq *= (temp-500+random_var2)/temp;
+      base_freq *= 0.8*(temp-500+random_var2)/temp;
     }
     
+    //increment = 11.023132/(25000 / base_freq);
+    //env_ovf = PULSE_COUNT * 25000 / base_freq;
+    
+    increment = 0.011023132/(PWM_FREQ_K / float(base_freq));
+    env_ovf = PULSE_COUNT * PWM_FREQ_K *1000 / base_freq;
+
+    Timer2.pause();
+    Timer2.setOverflow(env_ovf);
+    Timer2.resume();
+    draw_random_var = true;
     
     (TIMER4->regs).bas->CNT = 0;    // 4. Reset counters
     (TIMER2->regs).bas->CNT = 0;

@@ -1,0 +1,23 @@
+1. Vanilla - no options
+
+2. P2A
+   1 (overrides 2) 	- Amplitude decreases
+   2			- Amplitude increases
+   3 (overrides 4)	- Random select modification with fixed scaling
+   4 			- Random scaling to every grain
+
+3. P2F
+   1 (overrides 2) 	- Frequency decreases
+   2			- Frequency increases
+   3 (overrides 4)	- Random select modification with fixed scaling
+   4 			- Random scaling to every grain
+
+4. P2CC
+   1 (overrides 2) 	- Cycle count decreases
+   2			- Cycle count increases
+
+5. P2G
+   1 (overrides 2) 	- More distributed on smaller pressure
+   2			- More distributed on larger pressure
+   3			- Random addition/subtraction to grain interval
+   4 ~ 8		- Grain interval size *64 - 1

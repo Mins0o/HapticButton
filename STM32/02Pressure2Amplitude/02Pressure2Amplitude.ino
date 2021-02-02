@@ -11,7 +11,7 @@
 
 //--------User Variables---------//
 #define PWM_FREQ_K 25     // PWM frequency of ouput in kHz
-#define BASE_FREQ 350     // Base frequency of the sinewave vibration
+#define BASE_FREQ 300     // Base frequency of the sinewave vibration
 #define PULSE_COUNT 5     // Half cycles of base sinewave that fits in an envelope
 #define GRAIN_INTV 100    // Force interval between grains.
 #define RAND_INTENSITY_1 100   // Random event 1 intensity /1000
@@ -22,9 +22,9 @@
 //  which is determined in the loop() according to pressure level.
 
 #define TIM2CNT (TIMER2->regs).bas->CNT // Making it shorter
-#define A_IN_LOW ((GPIOA->regs->IDR) & 0x000003fc) >> 2
+#define A_IN_LOW ((GPIOA->regs->IDR) & 0x000001fc) >> 2
 
-#define INACCURACY 0.57     // Inaccuracy of frequency cuased by heavy function call in interrupt
+#define INACCURACY 0.57//25k// Inaccuracy of frequency cuased by heavy function call in interrupt
 
 #define INCREMENT (2 * PI)/(PWM_FREQ_K * 1000 / BASE_FREQ) / INACCURACY // Pulled out of interrupt for better performance
 #define ENV_OVF uint(PULSE_COUNT * (PWM_FREQ_K * 1000 / BASE_FREQ))     // Determines length of  single envelope
@@ -59,7 +59,6 @@ void Timer4_ISR(){ // This function is called after every overflow. Update PWM t
   }
   if(TIM2CNT ==0  || ENV_OVF-TIM2CNT < 5){
     play = false;
-    draw_random_var = true;
     TIM2CNT=0;
     i=0;
     pwmWrite(PB7, 36000/PWM_FREQ_K);
@@ -70,10 +69,12 @@ void setup() {
   GPIOB->regs->CRH &= 0x44404444; // Reseting pin PB12, Grain-passed indicator
   GPIOB->regs->CRH |= 0x00020000; // Setting PB12 to push-pull output
 
+  GPIOA->regs->CRH &= 0xfffffff8;
+  GPIOA->regs->CRH |= 0x00000008;
   GPIOA->regs->CRL &= 0x88888888;
   GPIOA->regs->CRL |= 0x88888888;
   GPIOA->regs->ODR &= 0x00000000;
-  GPIOA->regs->ODR |= 0x000003fc;
+  GPIOA->regs->ODR |= 0x000001fc;
   // Preset fuction from library
   pinMode(PB1, INPUT_ANALOG);
   pinMode(PB7, PWM);
@@ -118,6 +119,7 @@ void loop() {
   if(draw_random_var){
     random_var1 = random(1000);
     random_var2 = random(1000);
+    draw_random_var = false;
   }
   
   int read_val = analogRead(PB1);
@@ -145,7 +147,8 @@ void loop() {
       float temp = 1000000/RAND_INTENSITY_2;
       pressure_scaler *= (temp-500+random_var2)/temp;
     }
-    
+
+    draw_random_var = true;
     
     (TIMER4->regs).bas->CNT = 0;    // 4. Reset counters
     (TIMER2->regs).bas->CNT = 0;
