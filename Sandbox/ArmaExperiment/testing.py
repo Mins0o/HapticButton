@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 import statsmodels.tsa.arima.model
 import numpy as np
 
-audio = (wav2float(r"D:\Dropbox\수업자료\개별연구\repo\Sandbox\ArmaExperiment\400 low.wav"))[102000:int(2.5*30875+102000)]
+#audio = (wav2float(r"D:\Dropbox\수업자료\개별연구\repo\Sandbox\ArmaExperiment\400 low.wav"))[102000:int(2.5*30875+102000)]
+audio = (wav2float(r"D:\Dropbox\수업자료\개별연구\repo\Sandbox\ArmaExperiment\RW400.wav"))[10000:int(2.5*30875+10000)]
 audio_800 = DecreaseFrequency(list(audio),44100,800)
 audio_5000 = DecreaseFrequency(list(audio),44100,5000)
 audio_10k = DecreaseFrequency(list(audio),44100,10000)
