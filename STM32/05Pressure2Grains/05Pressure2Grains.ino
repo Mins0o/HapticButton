@@ -14,7 +14,7 @@
 #define BASE_FREQ 250       // Base frequency of the sinewave vibration
 #define PULSE_COUNT 3       // Half cycles of base sinewave that fits in an envelope
 //#define GRAIN_INTV 100    // Force interval between grains.
-#define RAND_INTENSITY 300  // Random event intensity /1000
+#define RAND_INTENSITY 800  // Random event intensity /1000
 //-------------------------------//
 
 #define TIM2CNT (TIMER2->regs).bas->CNT // Making it shorter

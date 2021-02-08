@@ -110,9 +110,9 @@ void loop() {
     played_at = read_val;           // 1. Keep record
 
     if(A_IN_LOW & 0b00000001){      // 2. Pulse count modification
-      pulse_count = max(1, (4096 - played_at) / 400);
-    }else if(A_IN_LOW & 0b00000010){
       pulse_count = min(10, 1 + played_at/400);
+    }else if(A_IN_LOW & 0b00000010){
+      pulse_count = max(1, (4096 - played_at) / 400);
     }else{
       pulse_count = 5;
     }

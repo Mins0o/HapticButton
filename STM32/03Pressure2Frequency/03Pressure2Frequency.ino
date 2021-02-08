@@ -129,9 +129,9 @@ void loop() {
     played_at = read_val;           // 1. Keep record
     
     if(A_IN_LOW & 0b1){      // 2. base-frequency modification
-      base_freq = 200 * max(1., 1+(4096-played_at)/4096.);
-    }else if(A_IN_LOW & 0b10){
       base_freq = 400 * min(1., 0.5+played_at/8000.);
+    }else if(A_IN_LOW & 0b10){
+      base_freq = 200 * max(1., 1+(4096-played_at)/4096.);
     }else{
       base_freq = 300;
     }
