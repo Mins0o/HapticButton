@@ -90,7 +90,7 @@ Some difference in perception was found along a few variations.
 -	Better understanding of how microcontroller operates.  
 	Timers, SFR, PWM Interrupts, Hardware Abstract Library  
 -	Low-pass filters in practice  
--	Cost/strength and overflows of datatypes  
+-	Cost/strength of overflows of datatypes  
 -	Reading scientific papers  
   
 ## 6.	Related papers and their contribution to this research  
