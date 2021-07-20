@@ -49,7 +49,7 @@ void Timer4_ISR(){ // This function is called after every overflow. Update PWM t
   if(i>2*PI){
     i=0;
   }
-  if(TIM2CNT ==0  || env_ovf-TIM2CNT < 5){
+  if(TIM2CNT ==0  || env_ovf-TIM2CNT < 7){
     play = false;
     TIM2CNT=0;
     i=0;
@@ -128,6 +128,6 @@ void loop() {
     i=0;
     play=true;                      // 3. Set play flag
     GPIOB->regs->ODR ^= 0x00001000; // 4. Grain-passed indicator
-    Serial1.println(pulse_count);
+    Serial1.println(read_val);
   }
 }

@@ -3,32 +3,6 @@ from numpy import average
 import csv
 import random
 	
-def TsvToData(filePath):
-	"""This method reads .tsv file and returns the data, XY split in a tuple"""
-	with open(filePath,'r') as file:
-		lines = list(csv.reader(file, delimiter = '\t'))
-		data = [[int(x) for x in line[0].split(',')] for line in lines]
-		label = [line[1] for line in lines]
-	return(data, label)
-	
-def LoadFiles(filePath = None):
-	"""This method returns a dictionary of data which are divided into X and Y.
-	For example, if <file1.tsv>, <file2.tsv>, <file3.tsv> are loaded,
-	{"file1.tsv" : <data1>, "file2.tsv" : <data2>, "file3.tsv" : <data3>}
-	where each <data#> is formatted as ([data_0, ..., data_n], [label_0, ..., label_n])"""
-	if filePath == None:
-		path = input("What is the path of your data folder?\n>>> ")
-	else:
-		path = filePath
-	dataFiles = [file for file in listdir(path) if file[-4:]==".tsv"]
-	for fileNum in range(len(dataFiles)):
-		print("{0:02d}\t{1}".format(fileNum,dataFiles[fileNum]))
-	selections = [int(x) for x in input("Type in indices of files, each separated by spacing\n>>> ").split()]
-	filesDict = {}
-	for selection in selections:
-		filesDict[dataFiles[selection]] = TsvToData(path+"\\"+dataFiles[selection])
-	return(filesDict)
-
 def TruncateToMinLength(dataCollection):
 	"""This method matches the length of the data by cutting off the tails of longer files"""
 	# Get minimum length and file name of it
@@ -85,17 +59,7 @@ def ElongateToMaxLength(dataCollection):
 				output[0].append(_data + [int(round((lastPoint * (lenDiff - i) + avg * i)/ lenDiff)) for i in range(lenDiff)])
 				output[1].append(dataCollection[dataFile][1][i])
 	return output
-				
-def SaveData(data, filePath = None, fileName = "Processed"):
-	"""This method saves an XY-split data into a tsv file"""
-	if filePath == None:
-		path = input("What is the path of your data folder?\n>>> ")
-	else:
-		path = filePath
-	with open(path + "\\{}.tsv".format(fileName), 'w') as file:
-		for lineNumber in range(len(data[0])):
-			file.write(",".join([str(x) for x in data[0][lineNumber]]) + "\t" + data[1][lineNumber] + "\n")
-	print("Saved the processed file\n")
+
 
 def MatchFrequency(dataCollection, originalF = 7840, targetF = 45000):
 	"""This method compares the frequency difference and calls a data processing method accordingly"""
@@ -147,17 +111,23 @@ def DecreaseFrequency(data, originalF, targetF, avgOption = True):
 	"""Decrease frequency by sampling from original data.
 	This method uses psuedo random distribution to ensure it has rather uniform smapling rate match.
 	With avgOption on(True), the sampling will use the average of the missed datapoints.
-	If the option is False, it will sample from a single point."""
+	If the option is False, it will sample from a single point.
+	
+	data: Numeric datapoints in list format
+	originalF: integer value of the data's sample rate
+	targetF: integer value of the target smple rate
+	avgOption: boolean value to enable averaging
+	"""
 	baseStep = originalF // targetF
 	randomAddPossibility = originalF % targetF
 	returnData = []
 	index = 0
 	endOfList = False
-	randAdd = list([1 for i in range(randomAddPossibility)] + [0 for i in range(targetF-randomAddPossibility)])
+	randAdd = list([1 for i in range(randomAddPossibility)] + [0 for i in range(targetF-randomAddPossibility)]) #create a list of 0 and 1 with fixed proportion
 	if avgOption:
 		prev = 0
 		while not endOfList:
-			random.shuffle(randAdd)
+			random.shuffle(randAdd) # the list of 0 and 1 is mixed
 			for randomArrayIndex in range(targetF):
 				index += baseStep + randAdd[randomArrayIndex]
 				slice = data[prev:index]
@@ -181,7 +151,7 @@ def DecreaseFrequency(data, originalF, targetF, avgOption = True):
 	return returnData
 	
 if (__name__ == "__main__"):
-	print("The path may contain spaces, and escape characters will not work.")
+	print("The path may contain spaces and escape characters will not work.")
 	filePath = input("What is the path of your data folder?\n>>> ")
 	print("<<<MatchFrequency() in progress>>>")
 	SaveData(MatchFrequency(LoadFiles(filePath)), filePath)

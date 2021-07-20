@@ -11,8 +11,8 @@
 
 //--------User Variables---------//
 #define PWM_FREQ_K 25       // PWM frequency of ouput in kHz
-#define BASE_FREQ 250       // Base frequency of the sinewave vibration
-#define PULSE_COUNT 3       // Half cycles of base sinewave that fits in an envelope
+#define BASE_FREQ 300       // Base frequency of the sinewave vibration
+#define PULSE_COUNT 5       // Half cycles of base sinewave that fits in an envelope
 //#define GRAIN_INTV 100    // Force interval between grains.
 #define RAND_INTENSITY 800  // Random event intensity /1000
 //-------------------------------//

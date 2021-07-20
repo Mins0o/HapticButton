@@ -15,7 +15,7 @@
 #define PULSE_COUNT 5     // Half cycles of base sinewave that fits in an envelope
 #define GRAIN_INTV 100    // Force interval between grains.
 #define RAND_INTENSITY_1 100   // Random event 1 intensity /1000
-#define RAND_INTENSITY_2 900   // Random event 2 intensity /1000
+#define RAND_INTENSITY_2 990   // Random event 2 intensity /1000
 //-------------------------------//
 
 // In this code, amplitude is multiplied by a scaling factor, 

@@ -31,6 +31,8 @@ audio_25k_1byte *= 256
 clip_25k = audio_25k_1byte > 255
 audio_25k_1byte[clip_25k] = 255
 copy_this = [int(i) for i in audio_25k_1byte]
+plt.subplot(121)
+plt.plot(copy_this+copy_this)
 #print(copy_this)
 #print(len(copy_this))
 first_half = copy_this.copy()
@@ -39,6 +41,7 @@ complete = first_half+copy_this
 print(complete)
 print(len(complete))
 print(np.average(complete))
+plt.subplot(122)
 plt.plot(complete)
 plt.show()
 
