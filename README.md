@@ -4,7 +4,8 @@ Research on improvement on haptic button.
 This project was done with advisory from professor [Geehyuk Lee](https://hcil.kaist.ac.kr/geehyuk-lee) from [KAIST HCI Lab](https://hcil.kaist.ac.kr/).  
 It was an attempt to improve the [3D-press: haptic illusion](https://dl.acm.org/doi/abs/10.1145/1891903.1891931) by J. Kildal.  
   
-![Kildal's model](https://github.com/Mins0o/HapticButton/raw/main/model.png)  
+![Kildal's model](./Figures/model.png)  
+
 The main focus of improvement was the discrete, rusty spring like feeling the baseline method had.
  Simple model from the baseline make the implementation that much simple and effective,
  but it also made the implementation to share the same universal feelings with less room of diversification.  
@@ -44,18 +45,27 @@ Below are the list of variations followed by their profile plot (X - time, Y - s
   The recorded sound is low-pass filtered beforehand.
 The plots below is recorded directly from microcontroller output after low-pass filter.  
   
-![Amplitude](https://github.com/Mins0o/HapticButton/raw/main/Amplitude.png)  
-![Frequency](https://github.com/Mins0o/HapticButton/raw/main/Frequency.png)  
-![Envelope](https://github.com/Mins0o/HapticButton/raw/main/Envelope.png)  
-![Grain Intervals](https://github.com/Mins0o/HapticButton/raw/main/GrainIntv.png)  
-![Pulse Counts](https://github.com/Mins0o/HapticButton/raw/main/PulseCnt.png)  
-![Gradient to Amplitude](https://github.com/Mins0o/HapticButton/raw/main/GradientToAmplitude.png)  
+![Amplitude](./Figures/Amplitude.png)  
+![Frequency](./Figures/Frequency.png)  
+![Envelope](./Figures/Envelope.png)  
+![Grain Intervals](./Figures/GrainIntv.png)  
+![Pulse Counts](./Figures/PulseCnt.png)  
+![Gradient to Amplitude](./Figures/GradientToAmplitude.png)  
   
 ## 3.	Implementation detail  
 The implementation is done on a system as shown below.  
-![Whole System](https://github.com/Mins0o/HapticButton/raw/main/System.png)    
+
+![Whole System](./Figures/System.png)    
+
 Arduino with ATmega328p chip was used for earlier stage, but was ported over to STM32 chip due to its computational limits and memory limits. The algorithm can be broken down to two loops that runs in almost time shared manner. The main loop and timer overflow loop.   
-![Internal Workings](https://github.com/Mins0o/HapticButton/raw/main/InternalWorkings.png)    
+
+![The Device](./Figures/Device.jpg)
+![The Device](./Figures/Device.gif)
+> The divce
+
+![Internal Workings](./Figures/InternalWorkings.png)   
+> Internal workings diagram 
+
 In the main loop, force value and setting switches are read. According to the force change, 
 if sufficient amount of change was made, signal playback flag is set and timer is reset.  
 There are two timers being used, a timer for PWM cycle and another one for the signal envelope. 
@@ -71,7 +81,7 @@ The recorded sound is stored as lookup table and is being played in loop constan
 When setting PWM intensity, the force difference compared to last reading is used as scaler. 
 The recorded sound has been edited to be symmetrical in order to prevent ‘knocking’ of the sound when sound signal meets an abrupt change. 
 In the plots below, first signal makes knocking sound at around 9000, and the right one does not.  
-![Mirrored signal to prevent knocking](https://github.com/Mins0o/HapticButton/raw/main/Mirrored.png)  
+![Mirrored signal to prevent knocking](./Figures/Mirrored.png)  
 
 ## 4.	Results  
 Some difference in perception was found along a few variations.  
