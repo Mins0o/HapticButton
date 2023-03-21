@@ -1,7 +1,7 @@
 # HapticButton
 Research on improvement on haptic button.
 
-This project was done with advisory from professor [Geehyuk Lee](https://hcil.kaist.ac.kr/geehyuk-lee) from [KAIST HCI Lab](https://hcil.kaist.ac.kr/).  
+This project was done with advisory from professor [Geehyuk Lee](https://hcil.kaist.ac.kr/people/) from [KAIST HCI Lab](https://hcil.kaist.ac.kr/).  
 It was an attempt to improve the [3D-press: haptic illusion](https://dl.acm.org/doi/abs/10.1145/1891903.1891931) by J. Kildal.  
   
 ![Kildal's model](./Figures/model.png)  
